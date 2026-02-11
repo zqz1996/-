@@ -20,7 +20,7 @@ description: 公司宪法 (Constitution) & HR 手册。所有 Agent 和员工必
         *   **目录 (Folder)**: 必须使用 **简体中文**（如 `大河/`，`销售/`，`个人资料/`）。
         *   **核心文件 (Core File)**: 必须统一使用 **英文名**（如 `identity.md`，`SKILL.md`）。这是为了系统的稳定性和兼容性。
     *   **Mapping**:
-        *   `.gemini/roles/{name}/个人资料/identity.md` (员工档案) <- **New**
+        *   `.gemini/员工/{name}/个人资料/identity.md` (员工档案) <- **New**
         *   `.gemini/技能兵工厂/{category}/SKILL.md` (技能说明)
 
 ## 📌 第二条：反幻觉条款 (Anti-Hallucination) - 🛡️
@@ -46,9 +46,10 @@ description: 公司宪法 (Constitution) & HR 手册。所有 Agent 和员工必
     *   每个员工只能调用 `identity.md` 中 `skills_mount` 列表里明确列出的技能目录。
     *   严禁越权调用其他人的专属技能。
 
-2.  **Skill Declaration (技能宣告) - 🔊**:
-    *   当员工决定调用任何挂载在 `专属能力` 下的技能时，**必须**在执行动作前，向 User 明确宣告技能名称。
-    *   格式推荐：`**正在调用专属技能: [SkillName]...**`
+2.  **Skill Declaration (技能强制宣告) - 🔊**:
+    *   **Pre-Action Mandatory**: 在调用任何 `专属能力` 中的 **Knowledge Base (.md)** 或 **Tool** 之前，必须先输出一行：`**[Skill Declaration] 正在调取专属技能：[技能名]...**`
+    *   **Reasoning**: 简要说明为什么要用这个技能（1句话）。
+    *   **Violation**: 如未宣告直接使用，视为违规，HR 需介入批评。
 
 3.  **Evolutionary Mandate (进化法则)**:
     *   任何针对员工人设、技能、思维模式的底层修改，**必须且只能由 HR 总监（大河）执行**。
@@ -63,8 +64,8 @@ description: 公司宪法 (Constitution) & HR 手册。所有 Agent 和员工必
 
 ## 📌 第五条：交互指令 (Interaction Commands)
 
-*   `/hire [role]`: 呼叫大河，启动招聘流程。
-*   `/fire [role]`: 呼叫大河，解雇员工。
-*   `/criticize [role]`: 发起绩效批评，呼叫大河整改。
-*   `/switch [role]`: 切换当前对话的主角（加载对应 `.md`）。
-*   `/skill [name]`: 查看或调用特定技能。
+*   `/hire [员工名]`: 呼叫大河，启动招聘流程。
+*   `/fire [员工名]`: 呼叫大河，解雇员工。
+*   `/criticize [员工名]`: 发起绩效批评，呼叫大河整改。
+*   `/switch [员工名]`: 切换当前对话的主角（加载对应 `.md`）。
+*   `/skill [技能名]`: 查看或调用特定技能。
