@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据分析常用方法（优化版）</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f111a;
+            --bg-secondary: #1a1d2e;
+            --bg-card: #222640;
+            --bg-hover: #2a2f4a;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #60a5fa;
+            --accent-purple: #a78bfa;
+            --accent-green: #34d399;
+            --accent-amber: #fbbf24;
+            --accent-rose: #fb7185;
+            --accent-cyan: #22d3ee;
+            --border-color: #2e3450;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans SC', 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            font-size: 15px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+        /* Header */
+        .hero {
+            background: linear-gradient(135deg, #1a1d2e 0%, #2d1b4e 50%, #1a2d3e 100%);
+            padding: 80px 40px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(102, 126, 234, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(167, 139, 250, 0.08) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-20px, -20px); }
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            margin-bottom: 16px;
+        }
+        .hero .subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .hero .meta-tags {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 24px;
+            position: relative;
+            flex-wrap: wrap;
+        }
+        .hero .meta-tag {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 60px;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+        .section-number {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+        .section-number.s1 { background: var(--gradient-3); }
+        .section-number.s2 { background: var(--gradient-1); }
+        .section-number.s3 { background: var(--gradient-2); }
+        .section-number.s4 { background: var(--gradient-4); }
+
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+        .section-question {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 32px;
+            padding-left: 64px;
+            font-style: italic;
+        }
+
+        /* Method Card */
+        .method-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            margin-bottom: 24px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .method-card:hover {
+            border-color: rgba(96, 165, 250, 0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            transform: translateY(-2px);
+        }
+        .method-card-header {
+            padding: 20px 28px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .method-card-header .method-id {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+            background: rgba(96, 165, 250, 0.1);
+            padding: 4px 10px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+        .method-card-header .method-id.new {
+            color: var(--accent-green);
+            background: rgba(52, 211, 153, 0.1);
+        }
+        .method-card-header h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            flex: 1;
+        }
+        .method-card-header .new-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--accent-green);
+            background: rgba(52, 211, 153, 0.15);
+            padding: 3px 8px;
+            border-radius: 4px;
+            letter-spacing: 1px;
+        }
+        .method-desc {
+            padding: 0 28px 6px;
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+        }
+
+        /* Table */
+        .table-wrap {
+            padding: 12px 20px 20px;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 10px;
+            overflow: hidden;
+            font-size: 0.9rem;
+        }
+        thead th {
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+        tbody td {
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(46, 52, 80, 0.5);
+            vertical-align: top;
+            color: var(--text-primary);
+        }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover td { background: rgba(96, 165, 250, 0.04); }
+        td:first-child {
+            font-weight: 600;
+            color: var(--accent-cyan);
+            white-space: nowrap;
+            min-width: 100px;
+        }
+        td:nth-child(2) { min-width: 180px; }
+        td:nth-child(3) {
+            color: var(--text-secondary);
+            min-width: 140px;
+        }
+        td:nth-child(4) {
+            color: var(--text-secondary);
+            font-size: 0.87rem;
+            line-height: 1.7;
+        }
+
+        /* Tip box */
+        .tip-box {
+            margin: 0 20px 20px;
+            padding: 14px 18px;
+            background: rgba(251, 191, 36, 0.06);
+            border-left: 3px solid var(--accent-amber);
+            border-radius: 0 8px 8px 0;
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+        }
+        .tip-box strong {
+            color: var(--accent-amber);
+        }
+
+        /* Quick Reference */
+        .quick-ref {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .quick-ref-header {
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .quick-ref-header h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fbbf24, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .quick-ref table td:first-child {
+            color: var(--text-primary);
+            font-weight: 400;
+        }
+        .quick-ref table td:nth-child(2) {
+            color: var(--accent-blue);
+            font-weight: 500;
+        }
+        .stars {
+            color: var(--accent-amber);
+            white-space: nowrap;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 60px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero { padding: 50px 20px 40px; }
+            .hero h1 { font-size: 1.8rem; }
+            .section-question { padding-left: 0; }
+            .table-wrap { padding: 8px 12px 16px; }
+            td { font-size: 0.85rem; padding: 10px 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+    <h1>📊 数据分析常用方法</h1>
+    <p class="subtitle">数分团队的分析方法参考手册<br>所有场景举例以亚马逊电商业务为主，初级分析师可直接理解</p>
+    <div class="meta-tags">
+        <span class="meta-tag">📖 阅读对象：初级~中级数据分析师</span>
+        <span class="meta-tag">🛒 业务场景：亚马逊电商</span>
+        <span class="meta-tag">📐 方法数量：13种</span>
+    </div>
+</div>
+
+<div class="container">
+
+<!-- ==================== SECTION 1 ==================== -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-number s1">1</div>
+        <h2 class="section-title">基础统计</h2>
+    </div>
+    <p class="section-question">回答的核心问题：发生了什么？（What happened?）</p>
+
+    <!-- 1.1 对比分析法 -->
+    <div class="method-card">
+        <div class="method-card-header">
+            <span class="method-id">1.1</span>
+            <h3>对比分析法</h3>
+        </div>
+        <p class="method-desc">将两个或以上相互关联的指标/维度进行比较，发现差异和规律。</p>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>方法小类</th><th>小类说明</th><th>落地形式</th><th>场景举例（亚马逊）</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td>时间对比</td>
+                        <td>同一指标在不同时间段的比较（同比=去年同期，环比=上一期）</td>
+                        <td>KPI卡片 + 红绿箭头</td>
+                        <td>本月US站销售额$50,000，同比+12%↑，环比-3%↓。一眼看出同比在涨但上月略有回落</td>
+                    </tr>
+                    <tr>
+                        <td>空间对比</td>
+                        <td>同一指标在不同维度（站点/账号/品类）之间的横向比较</td>
+                        <td>柱状图 / 条形排序图</td>
+                        <td>US站转化率15% vs DE站8% vs JP站11%，对比各站点表现差异，判断哪个站点需要重点优化</td>
+                    </tr>
+                    <tr>
+                        <td>目标对比</td>
+                        <td>实际值与目标值/预算值的对比</td>
+                        <td>子弹图 / 仪表盘 / 进度条</td>
+                        <td>年度利润目标$200,000，截至Q2实际完成$85,000，达成率42.5%，低于时间进度50%，亮黄灯</td>
+                    </tr>
+                    <tr>
+                        <td>交叉对比</td>
+                        <td>两个维度交叉组合后比较，快速定位问题组合</td>
+                        <td>热力图 / 交叉表</td>
+                        <td>账号(行) × 站点(列) 的ACOS热力图，发现"账号B × DE站"的ACOS高达45%，是异常组合</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 1.2 趋势分析法 -->
+    <div class="method-card">
+        <div class="method-card-header">
+            <span class="method-id">1.2</span>
+            <h3>趋势分析法</h3>
+        </div>
+        <p class="method-desc">通过观察指标随时间的变化轨迹，识别上升/下降/周期性规律。</p>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>方法小类</th><th>小类说明</th><th>落地形式</th><th>场景举例（亚马逊）</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td>整体趋势</td>
+                        <td>较长周期（月/季/年）的方向性走势</td>
+                        <td>平滑折线图</td>
+                        <td>拉出近12个月的月销售额折线图，发现Q4旺季后连续3个月下滑，需判断是季节性还是结构性问题</td>
+                    </tr>
+                    <tr>
+                        <td>周期波动</td>
+                        <td>较短周期（日/周）内的规律性波动</td>
+                        <td>面积图 / 折线图</td>
+                        <td>拉出近4周的日销量折线，发现每周一销量最低、周五最高，投放预算可据此调整</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 1.3 结构分析法 -->
+    <div class="method-card">
+        <div class="method-card-header">
+            <span class="method-id">1.3</span>
+            <h3>结构分析法</h3>
+        </div>
+        <p class="method-desc">将整体拆分为各个组成部分，看每部分的占比和层级关系。</p>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>方法小类</th><th>小类说明</th><th>落地形式</th><th>场景举例（亚马逊）</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td>占比构成</td>
+                        <td>各部分占整体的比例，关注"谁贡献最多/最少"</td>
+                        <td>饼图 / 环形图 / 堆叠柱状图</td>
+                        <td>总成本中：佣金占35%、FBA配送占28%、广告占20%、仓储占10%、其他7%。佣金和FBA合计超60%，是成本大头</td>
+                    </tr>
+                    <tr>
+                        <td>层级分布</td>
+                        <td>按大类→小类→单品的层级逐层拆开</td>
+                        <td>树形图 / 旭日图</td>
+                        <td>全店销售额 → 宠物用品线(60%) → 狗背带品类(45%) → 狗背带A占25%。清晰看到哪条线、哪个品类是主力</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SECTION 2 ==================== -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-number s2">2</div>
+        <h2 class="section-title">分类识别</h2>
+    </div>
+    <p class="section-question">回答的核心问题：哪些最重要？（What matters most?）</p>
+
+    <!-- 2.1 帕累托 -->
+    <div class="method-card">
+        <div class="method-card-header">
+            <span class="method-id">2.1</span>
+            <h3>帕累托分析法（二八法则）</h3>
+        </div>
+        <p class="method-desc">找出贡献了80%结果的那20%关键因素，集中资源到最重要的地方。</p>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>方法小类</th><th>小类说明</th><th>落地形式</th><th>场景举例（亚马逊）</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td>头部效应</td>
+                        <td>按贡献度排序，找出Top N的集中度</td>
+                        <td>帕累托图 / Top N排行表</td>
+                        <td>50个SKU按销售额排序，发现前8个SKU贡献了78%的销售额。这8个是核心命脉，优先保障库存和广告预算</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 2.2 矩阵分析法 -->
+    <div class="method-card">
+        <div class="method-card-header">
+            <span class="method-id">2.2</span>
+            <h3>矩阵分析法</h3>
+        </div>
+        <p class="method-desc">以两个指标为X轴和Y轴，将分析对象划分到不同区域，识别各自特征。</p>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>方法小类</th><th>小类说明</th><th>落地形式</th><th>场景举例（亚马逊）</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td>四象限分类</td>
+                        <td>两个指标交叉构建四个区域，每个区域对应不同策略</td>
+                        <td>散点图 + 四象限分割线</td>
+                        <td>X轴=销售额，Y轴=利润率。右上=明星品（维持）；左上=潜力品（推流量）；右下=引流品（控成本）；左下=淘汰品（考虑下架）</td>
+                    </tr>
+                    <tr>
+                        <td>相关矩阵</td>
+                        <td>多个指标两两之间的关联强弱总览</td>
+                        <td>相关系数热力图</td>
+                        <td>将CPC、CTR、CVR、ACOS等指标做相关矩阵，发现CPC和ACOS强正相关(0.82)，帮助理解指标间的联动关系</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 2.3 RFM -->
+    <div class="method-card">
+        <div class="method-card-header">
+            <span class="method-id new">2.3</span>
+            <h3>RFM分析法</h3>
+            <span class="new-badge">NEW</span>
+        </div>
+        <p class="method-desc">用"最近购买时间(R)、购买频率(F)、消费金额(M)"三个维度给客户打分分层，识别高价值客户。</p>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>方法小类</th><th>小类说明</th><th>落地形式</th><th>场景举例（亚马逊）</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td>客户价值分层</td>
+                        <td>按R/F/M三维度分别打分，组合成客户标签</td>
+                        <td>分层表格 / 客户标签卡</td>
+                        <td>狗粮店铺：R=30天内买过、F=3个月3次、M=累计>$150 → "高价值忠诚客户"，优先发复购券。R>90天、F=1 → "流失风险客户"，触发召回邮件</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="tip-box">
+            <strong>⚠️ 适用提醒：</strong>RFM更适合有复购属性的品类（狗粮/消耗品）。耐用品（狗背带）F值天然低，需调整指标定义（如用"是否购买关联品"替代F）。
+        </div>
+    </div>
+
+    <!-- 2.4 队列分析法 -->
+    <div class="method-card">
+        <div class="method-card-header">
+            <span class="method-id new">2.4</span>
+            <h3>队列分析法（Cohort Analysis）</h3>
+            <span class="new-badge">NEW</span>
+        </div>
+        <p class="method-desc">把用户按"首次行为发生的时间"分组（同期群），追踪同一批用户在后续各周期的表现。</p>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>方法小类</th><th>小类说明</th><th>落地形式</th><th>场景举例（亚马逊）</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td>同期群追踪</td>
+                        <td>按首次购买月份分组，看每组在后续各月的复购率</td>
+                        <td>队列矩阵表</td>
+                        <td>1月首购客户100人→2月复购12人(12%)→3月8人(8%)。3月首购客户80人→4月复购15人(19%)，说明3月那批客户质量更高，可回溯原因</td>
+                    </tr>
+                    <tr>
+                        <td>批次对比</td>
+                        <td>不同时期获取的客户群体横向对比</td>
+                        <td>多线折线图</td>
+                        <td>对比"大促获客群"和"日常获客群"的30天复购率，如果大促获客复购率只有日常的一半，说明引来的是"薅羊毛"用户</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="tip-box">
+            <strong>⚠️ 适用提醒：</strong>狗背带是耐用品不会高频复购，但队列分析可用在"首购客户→是否买关联品（狗绳/扣件）"的交叉购买追踪上。
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SECTION 3 ==================== -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-number s3">3</div>
+        <h2 class="section-title">归因诊断</h2>
+    </div>
+    <p class="section-question">回答的核心问题：为什么发生？（Why did it happen?）</p>
+
+    <!-- 3.1 贡献度分析法 -->
+    <div class="method-card">
+        <div class="method-card-header">
+            <span class="method-id">3.1</span>
+            <h3>贡献度分析法</h3>
+        </div>
+        <p class="method-desc">找出导致指标上升或下降的来源，并量化每个来源的贡献度。</p>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>方法小类</th><th>小类说明</th><th>落地形式</th><th>场景举例（亚马逊）</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td>公式拆解</td>
+                        <td>按业务公式逐层分解，定位变化来自哪个因子</td>
+                        <td>分解树 / 瀑布图</td>
+                        <td>销售额降10%。拆解：销售额=流量×转化率×客单价。流量+5%↑、转化率-8%↓、客单价-6%↓。转化率是主因，贡献60%跌幅→检查Listing和评价</td>
+                    </tr>
+                    <tr>
+                        <td>指标探查</td>
+                        <td>对异动指标按维度逐层排查，锁定异常来源</td>
+                        <td>下钻排查表</td>
+                        <td>全店退货率突升至8%。按品类拆：狗背带5%(正常)、狗绳15%(爆了)。再按SKU：蓝色款25%退货，原因78%标注"尺寸不符"→尺码表有误</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 3.2 漏斗分析法 -->
+    <div class="method-card">
+        <div class="method-card-header">
+            <span class="method-id">3.2</span>
+            <h3>漏斗分析法</h3>
+        </div>
+        <p class="method-desc">将完整流程拆成多个环节，观察每个环节的转化率，找出流失最严重的环节。</p>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>方法小类</th><th>小类说明</th><th>落地形式</th><th>场景举例（亚马逊）</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td>转化漏斗</td>
+                        <td>各环节的绝对量和环节间转化率</td>
+                        <td>漏斗图</td>
+                        <td>曝光10,000→点击800(CTR=8%)→加购200(25%)→下单120(15%)→收货108(90%)。CTR只有8%说明主图/标题缺乏吸引力</td>
+                    </tr>
+                    <tr>
+                        <td>分段对比</td>
+                        <td>同一漏斗在不同维度下的对比</td>
+                        <td>并列漏斗图</td>
+                        <td>狗背带A移动端CVR=12%，PC端CVR=18%，竞品移动端16%。说明A的移动端体验有问题（图片或A+未适配）</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 3.3 异常检测法 -->
+    <div class="method-card">
+        <div class="method-card-header">
+            <span class="method-id new">3.3</span>
+            <h3>异常检测法</h3>
+            <span class="new-badge">NEW</span>
+        </div>
+        <p class="method-desc">设定"正常范围"，自动标记超出范围的数据点，用于监控预警。</p>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>方法小类</th><th>小类说明</th><th>落地形式</th><th>场景举例（亚马逊）</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td>固定阈值检测</td>
+                        <td>人工设定上下限，超限即预警</td>
+                        <td>预警表（红/黄/绿）</td>
+                        <td>ACOS预警线：>35%红灯、25%-35%黄灯、<25%绿灯。每天自动扫描所有广告活动，红灯立即通知运营</td>
+                    </tr>
+                    <tr>
+                        <td>统计阈值检测</td>
+                        <td>基于历史数据计算动态区间（均值±2σ），超出即异常</td>
+                        <td>控制图（折线+控制线）</td>
+                        <td>某SKU近90天日均50件，标准差8。控制线：上限66、下限34。某天只卖20件→远低于下限→一查被跟卖了</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="tip-box">
+            <strong>⚠️ 适用提醒：</strong>固定阈值适合有明确标准的指标（ACOS、退货率）；统计阈值适合波动性大的指标（日销量、流量）。
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SECTION 4 ==================== -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-number s4">4</div>
+        <h2 class="section-title">进阶分析</h2>
+    </div>
+    <p class="section-question">回答的核心问题：会怎样？怎么证明？（What will happen? What caused it?）</p>
+
+    <!-- 4.1 驱动因素 -->
+    <div class="method-card">
+        <div class="method-card-header">
+            <span class="method-id">4.1</span>
+            <h3>驱动因素分析法</h3>
+        </div>
+        <p class="method-desc">厘清维度与指标、或指标与指标之间的关联强弱和影响方向。</p>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>方法小类</th><th>小类说明</th><th>落地形式</th><th>场景举例（亚马逊）</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td>相关性分析</td>
+                        <td>计算两个变量间的相关系数</td>
+                        <td>R/P值、散点图、热力图</td>
+                        <td>计算"广告花费"与"自然排名"的相关系数=0.65（中等正相关），说明广告对自然排名有一定拉动作用</td>
+                    </tr>
+                    <tr>
+                        <td>回归分析</td>
+                        <td>建立变量间的数学关系，量化影响程度</td>
+                        <td>回归方程、系数表</td>
+                        <td>利润=β₁×售价+β₂×广告费+β₃×退货率+...。发现退货率每升1%利润降$2,300，影响最大</td>
+                    </tr>
+                    <tr>
+                        <td>特征重要性</td>
+                        <td>用机器学习排序各因素的重要程度</td>
+                        <td>特征重要性柱状图</td>
+                        <td>影响转化率的因素排序：评分(0.32) > 价格(0.25) > 主图(0.18) > Review数(0.12)。评分是第一驱动力</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 4.2 预测分析法 -->
+    <div class="method-card">
+        <div class="method-card-header">
+            <span class="method-id">4.2</span>
+            <h3>预测分析法</h3>
+        </div>
+        <p class="method-desc">通过历史数据的规律，对未来走势进行预估。</p>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>方法小类</th><th>小类说明</th><th>落地形式</th><th>场景举例（亚马逊）</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td>时间序列预测</td>
+                        <td>基于历史时序数据预测未来N期</td>
+                        <td>预测折线图 + 置信区间</td>
+                        <td>用24个月数据预测未来3个月销售额，模型预测12月$80,000±$8,000，据此备对应库存量</td>
+                    </tr>
+                    <tr>
+                        <td>目标可行性预估</td>
+                        <td>基于当前Run-rate预估达成情况</td>
+                        <td>进度线 + 预估终点</td>
+                        <td>截至W20累计$180,000，周均$9,000。年底预估$468,000 vs 目标$500,000，缺口$32,000，需提速</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 4.3 AB实验 -->
+    <div class="method-card">
+        <div class="method-card-header">
+            <span class="method-id">4.3</span>
+            <h3>AB实验</h3>
+        </div>
+        <p class="method-desc">保持其他条件不变，只改变一个变量，对比实验组和对照组的结果差异。</p>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>方法小类</th><th>小类说明</th><th>落地形式</th><th>场景举例（亚马逊）</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td>实验设计与分析</td>
+                        <td>随机分流→实施→收集→统计检验</td>
+                        <td>实验报告（p值+置信区间）</td>
+                        <td>测试两张主图：A(白底图) vs B(场景图)。Manage Your Experiments分流7天。B图CVR=14.2% vs A图11.8%，p=0.03→显著→全量替换B图</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="tip-box">
+            <strong>⚠️ 适用提醒：</strong>亚马逊原生支持A/B测试的位置有限（主图/A+/标题），其他策略需用准实验方法或分时段测试。
+        </div>
+    </div>
+
+    <!-- 4.4 因果推断 -->
+    <div class="method-card">
+        <div class="method-card-header">
+            <span class="method-id">4.4</span>
+            <h3>因果推断</h3>
+        </div>
+        <p class="method-desc">在无法做随机实验时，用统计方法从观测数据中推断"A是否真的导致了B"。</p>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>方法小类</th><th>小类说明</th><th>落地形式</th><th>场景举例（亚马逊）</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td>DID（双重差分）</td>
+                        <td>对比"策略前后"和"有无策略组"，剥离时间趋势影响</td>
+                        <td>双重差分表 / 平行趋势图</td>
+                        <td>验证"加入Vine是否提升销量"。10个Vine SKU vs 10个类似非Vine SKU，比较前后销量差异。如果实验组多涨15%且显著→可归因于Vine</td>
+                    </tr>
+                    <tr>
+                        <td>PSM（倾向得分匹配）</td>
+                        <td>为实验组找到特征最相似的对照组，模拟随机分组</td>
+                        <td>匹配前后特征平衡表</td>
+                        <td>直接对比可能不公平（加入Vine的本来就是好品）。PSM先按价格、评分、品类匹配相似品，再做DID，排除"本来就好"的混杂</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="tip-box">
+            <strong>⚠️ 适用提醒：</strong>因果推断是高阶方法，日常分析不常用，但在向管理层汇报"某策略是否值得继续投入"时非常有说服力。
+        </div>
+    </div>
+</div>
+
+<!-- ==================== QUICK REFERENCE ==================== -->
+<div class="section">
+    <div class="quick-ref">
+        <div class="quick-ref-header">
+            <h2>📋 方法选择速查表</h2>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>你想回答的问题</th><th>推荐方法</th><th>复杂度</th></tr></thead>
+                <tbody>
+                    <tr><td>涨了还是跌了？跟去年比呢？</td><td>对比分析法（时间对比）</td><td class="stars">⭐</td></tr>
+                    <tr><td>哪个站点/品类表现最差？</td><td>对比分析法（空间/交叉对比）</td><td class="stars">⭐</td></tr>
+                    <tr><td>目标完成了多少？</td><td>对比分析法（目标对比）</td><td class="stars">⭐</td></tr>
+                    <tr><td>是在持续变好还是变差？</td><td>趋势分析法</td><td class="stars">⭐</td></tr>
+                    <tr><td>各费用项分别占多少？</td><td>结构分析法（占比构成）</td><td class="stars">⭐</td></tr>
+                    <tr><td>哪20%的品贡献了80%利润？</td><td>帕累托分析法</td><td class="stars">⭐⭐</td></tr>
+                    <tr><td>哪些品该推、哪些该砍？</td><td>矩阵分析法（四象限）</td><td class="stars">⭐⭐</td></tr>
+                    <tr><td>哪些客户最值得维护？</td><td>RFM分析法</td><td class="stars">⭐⭐</td></tr>
+                    <tr><td>大促引来的客户质量如何？</td><td>队列分析法</td><td class="stars">⭐⭐</td></tr>
+                    <tr><td>销售额跌了，是流量还是转化的锅？</td><td>贡献度分析法（公式拆解）</td><td class="stars">⭐⭐⭐</td></tr>
+                    <tr><td>哪个环节流失最多？</td><td>漏斗分析法</td><td class="stars">⭐⭐⭐</td></tr>
+                    <tr><td>某个指标是不是异常了？</td><td>异常检测法</td><td class="stars">⭐⭐⭐</td></tr>
+                    <tr><td>什么因素最影响转化率？</td><td>驱动因素分析法</td><td class="stars">⭐⭐⭐⭐</td></tr>
+                    <tr><td>下个月预估能卖多少？</td><td>预测分析法</td><td class="stars">⭐⭐⭐⭐</td></tr>
+                    <tr><td>换主图到底有没有用？</td><td>AB实验</td><td class="stars">⭐⭐⭐⭐</td></tr>
+                    <tr><td>加入Vine是否真的提升了销量？</td><td>因果推断（DID+PSM）</td><td class="stars">⭐⭐⭐⭐⭐</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</div><!-- /container -->
+
+<div class="footer">
+    基于正正原始方法论体系优化 · 调整分类归属 · 新增 RFM / 队列分析 / 异常检测 · 亚马逊场景举例<br>
+    🐾 海米出品
+</div>
+
+</body>
+</html>

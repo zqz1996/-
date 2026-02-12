@@ -63,7 +63,15 @@ def plot_lorenz_curve(X):
 
 ## 🤖 2. Machine Learning (机器学习)
 
-### 2.1 Scikit-Learn
+### 1. 核心知识库 (Core Knowledge Base)
+*   **精益数据分析 (The Bible)**: `.gemini/员工/海米/知识库/Lean_Analytics_Bible.md`
+    *   **Status**: Mastered (已内化).
+    *   **Scope**: 全书深度解析，涵盖电商、SaaS、UGC 等所有商业模式及分析框架。
+*   **电商实战手册**: (已合并至 Bible).
+*   **Github Notes**: `.gemini/员工/海米/知识库/Github_Notes.md`
+    *   **Status**: Archived (作为补充资料).
+
+### 2. 分析工具箱 (Toolbox)
 *   **Random Forest Feature Importance**:
     *   `model.feature_importances_`: 直接输出各维度（Color, Size, Region）对目标变量（如 Profit Decline）的贡献权重。
 
