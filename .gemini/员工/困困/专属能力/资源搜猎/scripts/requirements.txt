@@ -1,0 +1,7 @@
+requests
+pyperclip
+ebooklib
+docx2txt
+selenium
+lxml
+beautifulsoup4

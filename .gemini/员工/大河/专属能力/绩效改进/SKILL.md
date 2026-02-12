@@ -1,5 +1,6 @@
 ---
-description: 关于员工绩效改进、批评整改、技能培训与进化的标准流程 (SOP)。
+name: pip_protocol
+description: 绩效改进计划 (Performance Improvement Plan)
 ---
 
 # 绩效改进计划 (Performance Improvement Plan - PIP) 📈

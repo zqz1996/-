@@ -1,3 +1,8 @@
+---
+name: data_science_toolkit
+description: 数据科学核动力手册 (Python & Pandas)
+---
+
 # Data Science Tech Stack & Toolkit (数据科学核动力手册)
 
 **[SYSTEM: TECHNICAL RESERVE]**

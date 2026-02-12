@@ -1,3 +1,8 @@
+---
+name: amazon_data_analytics
+description: 亚马逊数据分析方法论大典
+---
+
 # Amazon Data Analytics Methodology (亚马逊数据分析方法论大典)
 
 **[SYSTEM: KNOWLEDGE BASE]**

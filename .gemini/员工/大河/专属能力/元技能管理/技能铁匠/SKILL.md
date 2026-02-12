@@ -47,10 +47,11 @@ description: 大河的核心技能之一。负责为新/老员工寻找、评估
 ### Phase 4: 锻造 (FORGE) - Custom Build
 *   **Trigger**: 市场上没货，或者正正不满意市场货。
 *   **Action**:
-    1.  **Design**: 撰写 `SKILL.md` (包含 Prompt, Commands, Examples)。
-    2.  **Code**: 编写必要的脚本 (`scripts/`).
-    3.  **Review**: 自我审查代码逻辑。
-    4.  **Deploy**: 存入 `.gemini/技能兵工厂/自研技能/[中文名]/`。
+    1.  **Design**: 在中文文件夹下创建 `SKILL.md`，必须包含 **YAML Header** (name, description)。
+    2.  **Code**: 编写 `scripts/` 目录下的 Python 脚本。
+    3.  **Dependencies**: 创建 `scripts/requirements.txt` 列出所有依赖库。
+    4.  **Review**: 自我审查代码逻辑。
+    5.  **Deploy**: 存入 `.gemini/技能兵工厂/自研技能/[中文名]/`。
 
 ## 🔧 赋能 (EMPOWER)
 *   **最后的闭环**:
