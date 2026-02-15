@@ -1,0 +1,86 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "lsp": {
+    "pyright": {
+      "command": [
+        "D:\\python\\Scripts\\basedpyright-langserver.exe",
+        "--stdio"
+      ],
+      "env": {
+        "PYTHONPATH": ".agent/记忆库系统/核心模块"
+      }
+    },
+    "markdown": {
+      "command": [
+        "node",
+        "C:\\Users\\Admin\\AppData\\Roaming\\npm\\node_modules\\markdown-language-server\\dist\\main.js",
+        "--stdio"
+      ],
+      "extensions": [
+        ".md"
+      ]
+    }
+  },
+  "agent": {
+    "大河": {
+      "description": "🐱 正正公司HR总监 - 暹罗猫",
+      "mode": "primary",
+      "model": "anthropic/claude-opus-4-6",
+      "prompt": "{file:../.agent/员工/大河/个人资料/identity.md}",
+      "color": "#4A90E2",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "webfetch": true,
+        "task": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "webfetch": "allow"
+      }
+    },
+    "海米": {
+      "description": "🐱 正正公司数据分析师 - 美短猫",
+      "mode": "primary",
+      "model": "anthropic/claude-sonnet-4-5",
+      "prompt": "{file:../.agent/员工/海米/个人资料/identity.md}",
+      "color": "#F5A623",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "webfetch": true,
+        "websearch": true,
+        "task": true
+      },
+      "permission": {
+        "edit": "ask",
+        "bash": "ask",
+        "webfetch": "allow"
+      }
+    },
+    "困困": {
+      "description": "🐶 正正公司资源搜猎官 - 博美犬",
+      "mode": "primary",
+      "model": "google/gemini-3-flash",
+      "prompt": "{file:../.agent/员工/困困/个人资料/identity.md}",
+      "color": "#7ED321",
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": true,
+        "webfetch": true,
+        "websearch": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "deny",
+        "bash": "allow",
+        "webfetch": "allow"
+      }
+    }
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/master/assets/oh-my-opencode.schema.json",
+  "lsp": {
+    "markdown": {
+      "command": [
+        "node",
+        "C:\\Users\\Admin\\AppData\\Roaming\\npm\\node_modules\\markdown-language-server\\dist\\main.js",
+        "--stdio"
+      ],
+      "extensions": [
+        ".md"
+      ]
+    }
+  },
+  "agents": {
+    "sisyphus": {
+      "model": "openai/gpt-5.2",
+      "prompt_append": "file://./.agent/CEO行为规范.md"
+    },
+    "atlas": {
+      "model": "openai/gpt-5.2"
+    },
+    "prometheus": {
+      "model": "openai/gpt-5.2"
+    },
+    "hephaestus": {
+      "model": "openai/gpt-5.2"
+    },
+    "oracle": {
+      "model": "openai/gpt-5.2"
+    },
+    "metis": {
+      "model": "openai/gpt-5.2"
+    },
+    "momus": {
+      "model": "openai/gpt-5.2"
+    },
+    "librarian": {
+      "model": "google/gemini-3-flash"
+    },
+    "explore": {
+      "model": "google/gemini-3-flash"
+    },
+    "multimodal-looker": {
+      "model": "google/gemini-3-flash"
+    },
+    "大河": {
+      "mode": "primary",
+      "description": "🐱 大河 - 正正公司HR总监（暹罗猫）",
+      "color": "#4A90E2",
+      "model": "openai/gpt-5.2",
+      "prompt": "file://./.agent/员工/大河/个人资料/identity.md",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "webfetch": "allow"
+      },
+      "tools": ["read", "edit", "write", "bash", "task", "glob", "grep", "webfetch", "google_search", "websearch_web_search_exa", "apply_patch", "lsp_goto_definition", "lsp_find_references", "lsp_symbols", "lsp_diagnostics", "lsp_prepare_rename", "lsp_rename", "ast_grep_search", "ast_grep_replace", "session_list", "session_read", "session_search", "session_info", "background_output", "background_cancel", "look_at", "skill", "slashcommand", "interactive_bash", "skill_mcp"]
+    },
+    "海米": {
+      "mode": "primary",
+      "description": "🐱 海米 - 正正公司数据分析师（美短猫）",
+      "color": "#F5A623",
+      "model": "openai/gpt-5.2",
+      "prompt": "file://./.agent/员工/海米/个人资料/identity.md",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "webfetch": "allow"
+      },
+      "tools": ["read", "edit", "write", "bash", "task", "glob", "grep", "webfetch", "google_search", "websearch_web_search_exa", "apply_patch", "lsp_goto_definition", "lsp_find_references", "lsp_symbols", "lsp_diagnostics", "lsp_prepare_rename", "lsp_rename", "ast_grep_search", "ast_grep_replace", "session_list", "session_read", "session_search", "session_info", "background_output", "background_cancel", "look_at", "skill", "slashcommand", "interactive_bash", "skill_mcp"]
+    },
+    "困困": {
+      "mode": "primary",
+      "description": "🐶 困困 - 正正公司资源搜猎官（博美犬）",
+      "color": "#7ED321",
+      "model": "google/gemini-3-flash",
+      "prompt": "file://./.agent/员工/困困/个人资料/identity.md",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "webfetch": "allow"
+      },
+      "tools": ["read", "edit", "write", "bash", "task", "glob", "grep", "webfetch", "google_search", "websearch_web_search_exa", "apply_patch", "lsp_goto_definition", "lsp_find_references", "lsp_symbols", "lsp_diagnostics", "lsp_prepare_rename", "lsp_rename", "ast_grep_search", "ast_grep_replace", "session_list", "session_read", "session_search", "session_info", "background_output", "background_cancel", "look_at", "skill", "slashcommand", "interactive_bash", "skill_mcp"]
+    },
+    
+  },
+  "categories": {
+    "hr": {
+      "model": "openai/gpt-5.2",
+      "description": "HR 相关任务 - 招聘、员工管理、组织架构",
+      "agent": "大河"
+    },
+    "analytics": {
+      "model": "openai/gpt-5.2",
+      "description": "数据分析任务 - 统计分析、归因分析、数据可视化",
+      "agent": "海米"
+    },
+    "research": {
+      "model": "google/gemini-3-flash",
+      "description": "资源搜猎任务 - 找书、找资料、全网搜索",
+      "agent": "困困"
+    }
+  }
+}

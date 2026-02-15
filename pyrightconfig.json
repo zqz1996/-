@@ -1,0 +1,21 @@
+{
+  "typeCheckingMode": "off",
+  "reportMissingImports": "none",
+  "reportMissingTypeStubs": "none",
+  "reportUnusedParameter": "none",
+  "reportUnusedVariable": "none",
+  "reportUnreachable": "none",
+  "reportUnusedImport": "none",
+  "reportUnknownMemberType": "none",
+  "reportUnknownParameterType": "none",
+  "reportUnknownVariableType": "none",
+  "reportUnknownArgumentType": "none",
+  "reportUnknownLambdaType": "none",
+  "reportUnknownExpressionType": "none",
+  "reportGeneralTypeIssues": "none",
+  "pythonPath": "D:\\python\\python.exe",
+  "extraPaths": [
+    ".agent/记忆库系统/核心模块",
+    ".agent/员工/困困/专属能力/资源搜猎/scripts/ebook_toolbox"
+  ]
+}
